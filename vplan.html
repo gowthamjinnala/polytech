@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Vplan</title>
+  <style>
+    /* ===== Theme: Black + Gold ===== */
+    :root{--bg:#0f1113;--card:#121416;--gold:#d4b55a;--muted:#bdbdbd;--success:rgba(76, 175, 80, 0.1);--success-border:#2e7d32;--success-text:#81c784}
+    *{box-sizing:border-box;font-family:Inter,system-ui,Segoe UI,Arial}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#0b0c0d, #0f1113);color:#eee}
+    .wrap{max-width:1300px;margin:28px auto;padding:28px} /* Increased width for 3rd column */
+    header{display:flex;align-items:center;gap:18px}
+    .logo{background:linear-gradient(90deg,var(--gold),#f0d27a);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800;font-size:32px}
+    .tag{color:var(--muted)}
+    
+    /* MAIN GRID: 3 COLUMNS (Left, Middle, Right-Hidden) */
+    main{display:grid; grid-template-columns: 320px 1fr auto; gap:20px; margin-top:20px; align-items: start;}
+
+    /* Left panel */
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);border:1px solid rgba(255,255,255,0.03);padding:18px;border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,0.6)}
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    input[type=text], input[type=number], input[type=date], select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff}
+    .btn{display:inline-block;padding:10px 16px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer; transition:0.3s}
+    .btn:hover{background:rgba(212,181,90,0.2)}
+    .btn.primary{background:var(--gold);color:#0b0c0d}
+    .btn.primary:hover{background:#c0a040}
+    .muted{color:var(--muted);font-size:13px}
+
+    /* Right content */
+    .content{display:flex;flex-direction:column;gap:18px}
+    .hero{height:160px;border-radius:12px;display:flex;align-items:center;justify-content:center;background-image:radial-gradient(circle at 10% 10%, rgba(212,181,90,0.06), transparent 10%), url('');background-size:cover;background-position:center;border:1px solid rgba(255,255,255,0.02)}
+    .row{display:flex;gap:12px}
+    .card.small{padding:12px}
+
+    /* Suggestion cards */
+    .card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+    .deal{padding:12px;border-radius:10px;background:linear-gradient(180deg,rgba(255,255,255,0.015),transparent);border:1px solid rgba(255,255,255,0.02)}
+    .price{font-weight:700;color:var(--gold);font-size:20px}
+
+    /* itinerary */
+    .itinerary{display:flex;flex-direction:column;gap:8px}
+    .day{padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
+
+    /* Optimization Column (Right Side) */
+    .opt-column {
+        width: 300px;
+        display: none; /* Hidden by default */
+        flex-direction: column;
+        gap: 15px;
+        animation: slideIn 0.5s ease forwards;
+    }
+    
+    .optimization-result {
+        background: var(--success);
+        border: 1px solid var(--success-border);
+        border-radius: 12px;
+        padding: 20px;
+        color: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .opt-title { color: var(--success-text); font-weight: bold; font-size: 16px; margin-bottom: 10px; display:block; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;}
+    .opt-list { list-style: none; padding: 0; margin: 0; }
+    .opt-list li { margin-bottom: 12px; font-size: 13px; line-height: 1.5; color: #ddd; }
+    .opt-total { margin-top: 15px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; font-size: 18px; color: var(--gold); font-weight: bold; }
+
+    @keyframes slideIn { from {opacity:0; transform:translateX(20px);} to {opacity:1; transform:translateX(0);} }
+
+    /* small footer */
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:1100px){
+        main{grid-template-columns:1fr} 
+        .card-grid{grid-template-columns:1fr}
+        .opt-column { width: 100%; } /* Stack on mobile */
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">Vplan</div>
+      <div class="tag">Plan Smarter. Travel Cheaper. Enjoy More.</div>
+    </header>
+
+    <main>
+      
+      <section class="card">
+        <h3>Plan Your Trip</h3>
+        
+        <label>From (Origin)</label>
+        <input id="origin" type="text" placeholder="e.g. Hyderabad, Delhi..." value="Hyderabad">
+
+        <label>Destination</label>
+        <input id="destination" type="text" placeholder="e.g. Goa, Aruku..." value="Goa">
+
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <div style="flex:1">
+            <label>Start Date</label>
+            <input id="start" type="date">
+          </div>
+          <div style="flex:1">
+            <label>End Date</label>
+            <input id="end" type="date">
+          </div>
+        </div>
+
+        <label>Budget (INR)</label>
+        <input id="budget" type="number" value="15000">
+
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn primary" id="planBtn">Generate Smart Trip</button>
+          <button class="btn" id="clearBtn">Clear</button>
+        </div>
+
+        <hr style="margin:14px 0;border-color:rgba(255,255,255,0.03)">
+        <div class="muted">Notice: The probability of the estimation is only 90%.</div>
+      </section>
+
+      <section class="content">
+        <div class="hero card small" id="hero">
+          <div style="text-align:center">
+            
+
+
+
+            <div style="font-size:20px;color:var(--gold);font-weight:700">Ready to explore?</div>
+            <div class="muted">Enter origin, destination and budget to let our AI suggest an optimized trip.</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h4>AI Budget Optimization</h4>
+          <div id="loader" class="muted">No plan generated yet.</div>
+
+          <div id="deals" style="margin-top:12px;display:none">
+            <div class="card-grid" id="dealGrid"></div>
+            <div style="margin-top:10px;text-align:right">
+              <button class="btn" id="viewItinerary">View Plans</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" id="itineraryCard" style="display:none">
+          <h4>Suggested Plans</h4>
+          <div class="itinerary" id="itinerary"></div>
+          <div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end">
+            <button class="btn" id="downloadPDF">Download Offline PDF</button>
+            <button class="btn primary" id="optimizeMore">Optimize More</button>
+          </div>
+        </div>
+
+        <div class="card" id="analyticsCard" style="display:none">
+          <h4>Budget Analytics</h4>
+          <canvas id="pie" width="260" height="160"></canvas>
+          <div style="margin-top:8px;color:var(--muted);font-size:13px" id="analyticsText"></div>
+        </div>
+      </section>
+
+      <aside class="opt-column" id="optimizationColumn">
+          </aside>
+
+    </main>
+
+    <footer>
+      @Vplan copyright 2025.
+    </footer>
+  </div>
+
+  <script>
+    // Mock engines & helpers
+    function formatINR(n){ return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+    // Mock data generator
+    function mockFetchOptions(origin, destination, days, budget){
+      const distanceFactor = origin.length * 100;
+      
+      const flights = [
+        {provider:'QuickAir', price: Math.max(2000, 4000 + distanceFactor - days*50 + Math.random()*1000)},
+        {provider:'GoFly', price: Math.max(1500, 3500 + distanceFactor - days*30 + Math.random()*900)},
+        {provider:'TrainSaver', price: Math.max(600, 1000 + (distanceFactor/2) + Math.random()*500)}
+      ];
+      const hotels = [
+        {provider:'SeaView Hotel', price: Math.max(2000, 3000 - days*80 + Math.random()*800)},
+        {provider:'BudgetStay', price: Math.max(800, 1200 - days*20 + Math.random()*400)},
+        {provider:'HomelyRooms', price: Math.max(600, 900 - days*10 + Math.random()*350)}
+      ];
+      const activities = [
+        {name:'City Walking Tour', price:300},
+        {name:'Boat Ride', price:800},
+        {name:'Local Cooking Class', price:1200}
+      ];
+      return {flights, hotels, activities};
+    }
+
+    // Simple AI-rule based optimizer
+    function optimizePlan(origin, destination, start, end, budget){
+      const startDate = new Date(start); const endDate = new Date(end);
+      const days = Math.max(1, Math.round((endDate - startDate)/(1000*60*60*24)) + 1);
+      const opts = mockFetchOptions(origin, destination, days, budget);
+
+      const cheapestFlight = opts.flights.reduce((a,b)=>a.price<b.price?a:b);
+      const cheapestHotel = opts.hotels.reduce((a,b)=>a.price<b.price?a:b);
+
+      const activitiesCost = opts.activities.slice(0,2).reduce((s,a)=>s+a.price,0);
+      const totalEstimate = cheapestFlight.price + (cheapestHotel.price * days) + activitiesCost;
+
+      const suggestions = [];
+      if (cheapestHotel.price * days > budget*0.5) suggestions.push('Hotel costs take majority of your budget. Consider BudgetStay or reduce nights.');
+      if (cheapestFlight.price > budget*0.35) suggestions.push('Flight is pricey — consider train or flexible dates.');
+      if (totalEstimate > budget) suggestions.push('Estimated total exceeds budget. Try increasing budget or shortening trip.');
+      if (suggestions.length===0) suggestions.push('Great! This plan fits your budget.');
+
+      const itinerary = [];
+      for(let d=1; d<=days; d++){
+        let activityText = '';
+        let subText = '';
+        if(d === 1) {
+            activityText = `Depart from ${origin} to ${destination}`;
+            subText = `Travel via ${cheapestFlight.provider} & check-in at ${cheapestHotel.provider}`;
+        } else {
+            activityText = `Explore ${destination} sights`;
+            subText = opts.activities[(d-1) % opts.activities.length].name;
+        }
+        itinerary.push({ day: d, activities: [activityText, subText] });
+      }
+
+      return {days, cheapestFlight, cheapestHotel, activities:opts.activities, totalEstimate, suggestions, itinerary};
+    }
+
+    // UI interactions
+    const planBtn = document.getElementById('planBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const loader = document.getElementById('loader');
+    const deals = document.getElementById('deals');
+    const dealGrid = document.getElementById('dealGrid');
+    const itineraryCard = document.getElementById('itineraryCard');
+    const itineraryEl = document.getElementById('itinerary');
+    const analyticsCard = document.getElementById('analyticsCard');
+    const pie = document.getElementById('pie');
+    const analyticsText = document.getElementById('analyticsText');
+    const optColumn = document.getElementById('optimizationColumn');
+
+    planBtn.addEventListener('click', ()=>{
+      const origin = document.getElementById('origin').value || 'Home';
+      const destination = document.getElementById('destination').value || 'Unknown';
+      const start = document.getElementById('start').value || new Date().toISOString().slice(0,10);
+      const end = document.getElementById('end').value || new Date(new Date().getTime()+2*24*60*60*1000).toISOString().slice(0,10);
+      const budget = Number(document.getElementById('budget').value) || 10000;
+
+      loader.innerText = 'AI is optimizing your budget...';
+      deals.style.display='none'; itineraryCard.style.display='none'; analyticsCard.style.display='none';
+      optColumn.style.display = 'none'; // Reset
+
+      setTimeout(()=>{
+        const plan = optimizePlan(origin, destination, start, end, budget);
+        showDeals(plan,budget);
+      }, 900);
+    });
+
+    clearBtn.addEventListener('click', ()=>{
+      document.getElementById('origin').value='';
+      document.getElementById('destination').value='';
+      document.getElementById('start').value='';
+      document.getElementById('end').value='';
+      document.getElementById('budget').value=15000;
+      loader.innerText='No plan generated yet.';
+      deals.style.display='none'; itineraryCard.style.display='none'; analyticsCard.style.display='none';
+      optColumn.style.display = 'none';
+    });
+
+    function showDeals(plan,budget){
+      dealGrid.innerHTML='';
+      const fCard = document.createElement('div'); fCard.className='deal';
+      fCard.innerHTML = `<div style="font-size:13px;color:var(--muted)">Travel</div><div class="price">${formatINR(plan.cheapestFlight.price)}</div><div class="muted">${plan.cheapestFlight.provider}</div>`;
+      dealGrid.appendChild(fCard);
+
+      const hCard = document.createElement('div'); hCard.className='deal';
+      hCard.innerHTML = `<div style="font-size:13px;color:var(--muted)">Hotel (per night)</div><div class="price">${formatINR(plan.cheapestHotel.price)}</div><div class="muted">${plan.cheapestHotel.provider}</div>`;
+      dealGrid.appendChild(hCard);
+
+      const aCard = document.createElement('div'); aCard.className='deal';
+      aCard.innerHTML = `<div style="font-size:13px;color:var(--muted)">Activities (sample)</div><div style="font-weight:600">${plan.activities.slice(0,2).map(x=>x.name).join(', ')}</div><div class="muted">Estimated extra ${formatINR(plan.activities.slice(0,2).reduce((s,a)=>s+a.price,0))}</div>`;
+      dealGrid.appendChild(aCard);
+
+      const eCard = document.createElement('div'); eCard.className='deal';
+      eCard.innerHTML = `<div style="font-size:13px;color:var(--muted)">Estimated Total</div><div class="price">${formatINR(plan.totalEstimate)}</div><div class="muted">Budget: ${formatINR(budget)}</div>`;
+      dealGrid.appendChild(eCard);
+
+      loader.innerText = plan.suggestions.join(' \n');
+      deals.style.display='block';
+
+      window.lastPlan = plan; window.lastBudget = budget;
+    }
+
+    document.getElementById('viewItinerary').addEventListener('click', ()=>{
+      const plan = window.lastPlan; if(!plan) return;
+      itineraryEl.innerHTML='';
+      plan.itinerary.forEach(it=>{
+        const e = document.createElement('div'); e.className='day';
+        e.innerHTML = `<div>Day ${it.day}: <strong>${it.activities[0]}</strong></div><div class="muted">${it.activities[1]}</div>`;
+        itineraryEl.appendChild(e);
+      });
+      itineraryCard.style.display='block';
+      analyticsCard.style.display='block';
+      renderPie(plan);
+    });
+
+    // --- BUTTON TRIGGER FOR RIGHT COLUMN ---
+    document.getElementById('optimizeMore').addEventListener('click', ()=>{
+      const btn = document.getElementById('optimizeMore');
+      const savedAmount = 2500; 
+      
+      const originalText = btn.innerText;
+      btn.innerText = "Analyzing...";
+      
+      setTimeout(() => {
+          optColumn.style.display = 'flex'; // Make the 3rd column visible
+          optColumn.innerHTML = `
+            <div class="optimization-result">
+                <span class="opt-title"><i class="fa-solid fa-bolt"></i> Smart Optimization</span>
+                <ul class="opt-list">
+                    <li>
+                        <strong>Change Dates (+1 Day)</strong><br>
+                        Flight prices drop significantly on Wednesday.
+                        <span style="color:var(--success-text); display:block; margin-top:2px;">Save ${formatINR(1200)}</span>
+                    </li>
+                    <li>
+                        <strong>Alternate Hotel</strong><br>
+                        "Palm Residency" offers free breakfast.
+                        <span style="color:var(--success-text); display:block; margin-top:2px;">Save ${formatINR(800)}</span>
+                    </li>
+                    <li>
+                        <strong>Transport</strong><br>
+                        Use local metro pass instead of cabs.
+                        <span style="color:var(--success-text); display:block; margin-top:2px;">Save ${formatINR(500)}</span>
+                    </li>
+                </ul>
+                <div class="opt-total">
+                    Total Savings: ${formatINR(savedAmount)}
+                </div>
+            </div>
+            
+            <div class="card small" style="text-align:center;">
+                <h4 style="margin:0 0 10px 0;">New Budget Projection</h4>
+                <div style="font-size:24px; color:var(--gold); font-weight:bold;">${formatINR(window.lastPlan.totalEstimate - savedAmount)}</div>
+                <div class="muted">Updated Estimate</div>
+            </div>
+          `;
+          btn.innerText = originalText;
+          // Smooth scroll to right if needed on mobile
+          optColumn.scrollIntoView({behavior: "smooth"});
+      }, 800);
+    });
+
+    document.getElementById('downloadPDF').addEventListener('click', ()=>{
+      const printContent = document.getElementById('itineraryCard').innerHTML;
+      const newWin = window.open('','_blank');
+      newWin.document.write('<html><head><title>Itinerary</title></head><body style="background:#fff;color:#000;">'+printContent.replace(/<button[\s\S]?>.*?<\/button>/g,'')+'</body></html>');
+      newWin.document.close(); newWin.print();
+    });
+
+    function renderPie(plan){
+      const ctx = pie.getContext('2d'); ctx.clearRect(0,0,pie.width,pie.height);
+      const days = plan.days;
+      const hotel = plan.cheapestHotel.price * days;
+      const flight = plan.cheapestFlight.price;
+      const activities = plan.activities.slice(0,2).reduce((s,a)=>s+a.price,0);
+      const food = Math.max(800, Math.round((hotel+flight+activities)*0.12));
+
+      const parts = [hotel, flight, activities, food];
+      const total = parts.reduce((s,x)=>s+x,0);
+      let start = -Math.PI/2;
+      const colors = ['#d4b55a','#b8860b','#cba65a','#9b7b3a'];
+      parts.forEach((val,i)=>{
+        const slice = (val/total) * Math.PI*2;
+        ctx.beginPath(); ctx.moveTo(130,80); ctx.fillStyle = colors[i%colors.length]; ctx.arc(130,80,70,start,start+slice); ctx.closePath(); ctx.fill();
+        start += slice;
+      });
+      analyticsText.innerHTML = `Hotel: ${formatINR(hotel)} • Travel: ${formatINR(flight)} • Activities: ${formatINR(activities)} • Food: ${formatINR(food)} <br> Estimated total: <strong>${formatINR(total)}</strong>`;
+    }
+
+    (function setDefaults(){
+      const s = new Date(); const e = new Date(s.getTime()+2*24*60*60*1000);
+      document.getElementById('start').value = s.toISOString().slice(0,10);
+      document.getElementById('end').value = e.toISOString().slice(0,10);
+    })();
+  </script>
+</body>
+</html>
