@@ -1,8 +1,21 @@
 {
   "dependencies": {
-    "body-parser": "^2.2.1",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "express": "^5.2.1",
-    "mysql2": "^3.15.3"
-  }
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7"
+  },
+  "name": "gvp-demo",
+  "version": "1.0.0",
+  "description": "Smart Travel Planner",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [
+    "travel-planning"
+  ],
+  "author": "",
+  "license": "ISC"
 }
