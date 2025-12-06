@@ -8,6 +8,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
   <style>
+    /*gowtham*/
     /* ===== THEME VARIABLES ===== */
     :root {
         --bg: #0f1113; --card: #16181a; 
@@ -409,14 +410,14 @@
             const styleBadge = document.getElementById('styleBadge');
             styleBadge.innerText = currentPlan.style.charAt(0).toUpperCase() + currentPlan.style.slice(1);
 
-            /*Grids
+            // Grids
             const grid = document.getElementById('dealGrid');
             grid.innerHTML = `
                 <div class="deal"><div style="font-size:12px;color:#888">Flight</div><div class="price">${formatINR(currentPlan.flightPrice)}</div></div>
                 <div class="deal"><div style="font-size:12px;color:#888">Hotel Total</div><div class="price">${formatINR(currentPlan.hotelPrice * currentPlan.days)}</div></div>
                 <div class="deal"><div style="font-size:12px;color:#888">Daily Costs</div><div class="price">${formatINR(currentPlan.foodCost)}</div></div>
                 <div class="deal" style="border-color:var(--gold)"><div style="font-size:12px;color:var(--gold)">Total</div><div class="price">${formatINR(currentPlan.total)}</div></div>
-            `;*/
+            `;
 
             // Itinerary
             document.getElementById('itineraryEl').innerHTML = currentPlan.itinerary.map(i => `<div class="day"><div>Day ${i.day}: <strong>${i.act1}</strong></div><div style="font-size:12px;color:#888">${i.act2}</div></div>`).join('');
